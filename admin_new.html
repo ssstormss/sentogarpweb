@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Sentoga City</title>
+    <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        #loginSection, #adminSection {
+            padding: 50px 0;
+        }
+        
+        #adminSection {
+            display: none;
+        }
+        
+        .admin-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .admin-tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .admin-tab.active {
+            border-bottom: 3px solid var(--primary-color);
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        .admin-content {
+            display: none;
+        }
+        
+        .admin-content.active {
+            display: block;
+        }
+        
+        .admin-item {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .admin-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .delete-btn {
+            background-color: #e74c3c;
+        }
+        
+        .delete-btn:hover {
+            background-color: #c0392b;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <h1>Sentoga City</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="shop.html">Shop</a></li>
+                <li><a href="rules.html">Regelwerk</a></li>
+                <li><a href="admin_new.html" class="active admin-link">Admin</a></li>
+            </ul>
+        </nav>
+        <div class="menu-toggle">
+            <i class="fas fa-bars"></i>
+        </div>
+    </header>
+
+    <section class="page-header">
+        <div class="container">
+            <h1>Admin-Bereich</h1>
+            <p>Verwalte den Shop und das Regelwerk deines Servers</p>
+        </div>
+    </section>
+
+    <!-- Login Section -->
+    <section id="loginSection">
+        <div class="container">
+            <div class="admin-container">
+                <div class="admin-login">
+                    <h2>Admin Login</h2>
+                    <div class="admin-form">
+                        <div class="admin-form-group">
+                            <label for="username">Benutzername</label>
+                            <input type="text" id="username" placeholder="Benutzername" value="admin">
+                        </div>
+                        <div class="admin-form-group">
+                            <label for="password">Passwort</label>
+                            <input type="password" id="password" placeholder="Passwort" value="admin123">
+                        </div>
+                        <button type="button" id="loginBtn" class="btn">Anmelden</button>
+                    </div>
+                    <p class="admin-info">Standard-Login: Benutzername "admin", Passwort "admin123"</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Admin Panel Section -->
+    <section id="adminSection">
+        <div class="container">
+            <div class="admin-container">
+                <div class="admin-header">
+                    <h2>Admin Panel</h2>
+                    <button id="logoutBtn" class="btn">Abmelden</button>
+                </div>
+                
+                <div class="admin-tabs">
+                    <div class="admin-tab active" data-tab="shopTab">Shop verwalten</div>
+                    <div class="admin-tab" data-tab="rulesTab">Regelwerk verwalten</div>
+                </div>
+                
+                <!-- Shop Management -->
+                <div id="shopTab" class="admin-content active">
+                    <h3>Shop-Artikel verwalten</h3>
+                    
+                    <form id="shopForm" class="admin-form">
+                        <input type="hidden" id="editItemId" value="">
+                        
+                        <div class="admin-form-group">
+                            <label for="itemTitle">Titel</label>
+                            <input type="text" id="itemTitle" placeholder="z.B. VIP Status" required>
+                        </div>
+                        
+                        <div class="admin-form-group">
+                            <label for="itemDescription">Beschreibung</label>
+                            <textarea id="itemDescription" placeholder="Beschreibe den Artikel..." required></textarea>
+                        </div>
+                        
+                        <div class="admin-form-group">
+                            <label for="itemPrice">Preis (€)</label>
+                            <input type="number" id="itemPrice" placeholder="z.B. 15.00" step="0.01" min="0" required>
+                        </div>
+                        
+                        <div class="admin-form-group">
+                            <label for="itemImage">Bild URL (optional)</label>
+                            <input type="text" id="itemImage" placeholder="z.B. img/vip.svg">
+                        </div>
+                        
+                        <div class="admin-buttons">
+                            <button type="submit" id="saveItemBtn" class="btn">Artikel hinzufügen</button>
+                            <button type="button" id="cancelItemBtn" class="btn" style="display:none;">Abbrechen</button>
+                        </div>
+                    </form>
+                    
+                    <div class="admin-items">
+                        <h3>Vorhandene Artikel</h3>
+                        <div id="shopItems"></div>
+                    </div>
+                </div>
+                
+                <!-- Rules Management -->
+                <div id="rulesTab" class="admin-content">
+                    <h3>Regeln verwalten</h3>
+                    
+                    <form id="ruleForm" class="admin-form">
+                        <input type="hidden" id="editRuleId" value="">
+                        
+                        <div class="admin-form-group">
+                            <label for="ruleSection">Kategorie</label>
+                            <input type="text" id="ruleSection" placeholder="z.B. Allgemeine Regeln" required>
+                        </div>
+                        
+                        <div class="admin-form-group">
+                            <label for="ruleText">Regeltext</label>
+                            <textarea id="ruleText" placeholder="Beschreibe die Regel..." required></textarea>
+                        </div>
+                        
+                        <div class="admin-buttons">
+                            <button type="submit" id="saveRuleBtn" class="btn">Regel hinzufügen</button>
+                            <button type="button" id="cancelRuleBtn" class="btn" style="display:none;">Abbrechen</button>
+                        </div>
+                    </form>
+                    
+                    <div class="admin-items">
+                        <h3>Vorhandene Regeln</h3>
+                        <div id="ruleItems"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <h2>Sentoga City</h2>
+                    <p>Dein FiveM Roleplay-Server</p>
+                </div>
+                <div class="footer-links">
+                    <h3>Links</h3>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="shop.html">Shop</a></li>
+                        <li><a href="rules.html">Regelwerk</a></li>
+                    </ul>
+                </div>
+                <div class="footer-social">
+                    <h3>Social Media</h3>
+                    <div class="social-icons">
+                        <a href="#" target="_blank"><i class="fab fa-discord"></i></a>
+                        <a href="#" target="_blank"><i class="fab fa-youtube"></i></a>
+                        <a href="#" target="_blank"><i class="fab fa-instagram"></i></a>
+                        <a href="#" target="_blank"><i class="fab fa-tiktok"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Sentoga City. Alle Rechte vorbehalten.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Warte, bis das Dokument vollständig geladen ist
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM-Elemente
+            const loginSection = document.getElementById('loginSection');
+            const adminSection = document.getElementById('adminSection');
+            const loginBtn = document.getElementById('loginBtn');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const tabs = document.querySelectorAll('.admin-tab');
+            const tabContents = document.querySelectorAll('.admin-content');
+            
+            // Shop-Verwaltung
+            const shopForm = document.getElementById('shopForm');
+            const shopItems = document.getElementById('shopItems');
+            const editItemId = document.getElementById('editItemId');
+            const saveItemBtn = document.getElementById('saveItemBtn');
+            const cancelItemBtn = document.getElementById('cancelItemBtn');
+            
+            // Regelwerk-Verwaltung
+            const ruleForm = document.getElementById('ruleForm');
+            const ruleItems = document.getElementById('ruleItems');
+            const editRuleId = document.getElementById('editRuleId');
+            const saveRuleBtn = document.getElementById('saveRuleBtn');
+            const cancelRuleBtn = document.getElementById('cancelRuleBtn');
+            
+            // Login
+            loginBtn.addEventListener('click', function() {
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                
+                if (username === 'admin' && password === 'admin123') {
+                    loginSection.style.display = 'none';
+                    adminSection.style.display = 'block';
+                    
+                    // Lade Inhalte
+                    loadShopItems();
+                    loadRules();
+                } else {
+                    alert('Falsche Zugangsdaten!');
+                }
+            });
+            
+            // Logout
+            logoutBtn.addEventListener('click', function() {
+                loginSection.style.display = 'block';
+                adminSection.style.display = 'none';
+            });
+            
+            // Tab-Wechsel
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Aktive Klasse entfernen
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    
+                    // Aktive Klasse hinzufügen
+                    this.classList.add('active');
+                    const tabId = this.getAttribute('data-tab');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+            
+            // Shop-Formular
+            shopForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const title = document.getElementById('itemTitle').value;
+                const description = document.getElementById('itemDescription').value;
+                const price = document.getElementById('itemPrice').value;
+                const image = document.getElementById('itemImage').value || 'img/placeholder.svg';
+                
+                saveShopItem(title, description, price, image);
+            });
+            
+            // Shop-Item speichern
+            function saveShopItem(title, description, price, image) {
+                // Items aus dem LocalStorage laden
+                const items = JSON.parse(localStorage.getItem('shopItems') || '[]');
+                
+                if (editItemId.value) {
+                    // Bestehendes Item aktualisieren
+                    const index = items.findIndex(item => item.id === editItemId.value);
+                    
+                    if (index !== -1) {
+                        items[index] = {
+                            id: editItemId.value,
+                            title: title,
+                            description: description,
+                            price: price + ' €',
+                            image: image
+                        };
+                    }
+                } else {
+                    // Neues Item hinzufügen
+                    const newItem = {
+                        id: Date.now().toString(),
+                        title: title,
+                        description: description,
+                        price: price + ' €',
+                        image: image
+                    };
+                    
+                    items.push(newItem);
+                }
+                
+                // In LocalStorage speichern
+                localStorage.setItem('shopItems', JSON.stringify(items));
+                
+                // Formular zurücksetzen
+                resetShopForm();
+                
+                // Liste aktualisieren
+                loadShopItems();
+            }
+            
+            // Shop-Items laden
+            function loadShopItems() {
+                const items = JSON.parse(localStorage.getItem('shopItems') || '[]');
+                shopItems.innerHTML = '';
+                
+                if (items.length === 0) {
+                    shopItems.innerHTML = '<p>Keine Artikel vorhanden.</p>';
+                    return;
+                }
+                
+                items.forEach(item => {
+                    const itemElement = document.createElement('div');
+                    itemElement.className = 'admin-item';
+                    itemElement.innerHTML = `
+                        <div class="admin-item-details">
+                            <h4>${item.title}</h4>
+                            <p>${item.description}</p>
+                            <p class="shop-item-price">${item.price}</p>
+                        </div>
+                        <div class="admin-buttons">
+                            <button class="btn" onclick="editItem('${item.id}')">Bearbeiten</button>
+                            <button class="btn delete-btn" onclick="deleteItem('${item.id}')">Löschen</button>
+                        </div>
+                    `;
+                    
+                    shopItems.appendChild(itemElement);
+                });
+            }
+            
+            // Shop-Formular zurücksetzen
+            function resetShopForm() {
+                shopForm.reset();
+                editItemId.value = '';
+                saveItemBtn.textContent = 'Artikel hinzufügen';
+                cancelItemBtn.style.display = 'none';
+            }
+            
+            // Abbrechen-Button für Shop-Items
+            cancelItemBtn.addEventListener('click', resetShopForm);
+            
+            // Shop-Item bearbeiten
+            window.editItem = function(id) {
+                const items = JSON.parse(localStorage.getItem('shopItems') || '[]');
+                const item = items.find(item => item.id === id);
+                
+                if (item) {
+                    document.getElementById('itemTitle').value = item.title;
+                    document.getElementById('itemDescription').value = item.description;
+                    document.getElementById('itemPrice').value = item.price.replace(/[^\d.]/g, '');
+                    document.getElementById('itemImage').value = item.image === 'img/placeholder.svg' ? '' : item.image;
+                    editItemId.value = id;
+                    
+                    saveItemBtn.textContent = 'Artikel aktualisieren';
+                    cancelItemBtn.style.display = 'inline-block';
+                    
+                    shopForm.scrollIntoView({ behavior: 'smooth' });
+                }
+            };
+            
+            // Shop-Item löschen
+            window.deleteItem = function(id) {
+                if (confirm('Möchtest du diesen Artikel wirklich löschen?')) {
+                    const items = JSON.parse(localStorage.getItem('shopItems') || '[]');
+                    const newItems = items.filter(item => item.id !== id);
+                    
+                    localStorage.setItem('shopItems', JSON.stringify(newItems));
+                    
+                    if (editItemId.value === id) {
+                        resetShopForm();
+                    }
+                    
+                    loadShopItems();
+                }
+            };
+            
+            // Regelwerk-Formular
+            ruleForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const section = document.getElementById('ruleSection').value;
+                const text = document.getElementById('ruleText').value;
+                
+                saveRule(section, text);
+            });
+            
+            // Regel speichern
+            function saveRule(section, text) {
+                // Regeln aus dem LocalStorage laden
+                const rules = JSON.parse(localStorage.getItem('rules') || '[]');
+                
+                if (editRuleId.value) {
+                    // Bestehende Regel aktualisieren
+                    const index = rules.findIndex(rule => rule.id === editRuleId.value);
+                    
+                    if (index !== -1) {
+                        rules[index] = {
+                            id: editRuleId.value,
+                            section: section,
+                            rule: text
+                        };
+                    }
+                } else {
+                    // Neue Regel hinzufügen
+                    const newRule = {
+                        id: Date.now().toString(),
+                        section: section,
+                        rule: text
+                    };
+                    
+                    rules.push(newRule);
+                }
+                
+                // In LocalStorage speichern
+                localStorage.setItem('rules', JSON.stringify(rules));
+                
+                // Formular zurücksetzen
+                resetRuleForm();
+                
+                // Liste aktualisieren
+                loadRules();
+            }
+            
+            // Regeln laden
+            function loadRules() {
+                const rules = JSON.parse(localStorage.getItem('rules') || '[]');
+                ruleItems.innerHTML = '';
+                
+                if (rules.length === 0) {
+                    ruleItems.innerHTML = '<p>Keine Regeln vorhanden.</p>';
+                    return;
+                }
+                
+                rules.forEach(rule => {
+                    const ruleElement = document.createElement('div');
+                    ruleElement.className = 'admin-item';
+                    ruleElement.innerHTML = `
+                        <div class="admin-item-details">
+                            <h4>${rule.section}</h4>
+                            <p>${rule.rule}</p>
+                        </div>
+                        <div class="admin-buttons">
+                            <button class="btn" onclick="editRule('${rule.id}')">Bearbeiten</button>
+                            <button class="btn delete-btn" onclick="deleteRule('${rule.id}')">Löschen</button>
+                        </div>
+                    `;
+                    
+                    ruleItems.appendChild(ruleElement);
+                });
+            }
+            
+            // Regelwerk-Formular zurücksetzen
+            function resetRuleForm() {
+                ruleForm.reset();
+                editRuleId.value = '';
+                saveRuleBtn.textContent = 'Regel hinzufügen';
+                cancelRuleBtn.style.display = 'none';
+            }
+            
+            // Abbrechen-Button für Regeln
+            cancelRuleBtn.addEventListener('click', resetRuleForm);
+            
+            // Regel bearbeiten
+            window.editRule = function(id) {
+                const rules = JSON.parse(localStorage.getItem('rules') || '[]');
+                const rule = rules.find(rule => rule.id === id);
+                
+                if (rule) {
+                    document.getElementById('ruleSection').value = rule.section;
+                    document.getElementById('ruleText').value = rule.rule;
+                    editRuleId.value = id;
+                    
+                    saveRuleBtn.textContent = 'Regel aktualisieren';
+                    cancelRuleBtn.style.display = 'inline-block';
+                    
+                    ruleForm.scrollIntoView({ behavior: 'smooth' });
+                }
+            };
+            
+            // Regel löschen
+            window.deleteRule = function(id) {
+                if (confirm('Möchtest du diese Regel wirklich löschen?')) {
+                    const rules = JSON.parse(localStorage.getItem('rules') || '[]');
+                    const newRules = rules.filter(rule => rule.id !== id);
+                    
+                    localStorage.setItem('rules', JSON.stringify(newRules));
+                    
+                    if (editRuleId.value === id) {
+                        resetRuleForm();
+                    }
+                    
+                    loadRules();
+                }
+            };
+        });
+    </script>
+</body>
+</html>

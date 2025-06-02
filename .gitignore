@@ -1,0 +1,16 @@
+# System Files
+.DS_Store
+Thumbs.db
+
+# Node modules (falls später hinzugefügt)
+node_modules/
+
+# Build files
+dist/
+build/
+
+# Local Netlify folder
+.netlify/
+
+# Debug files
+debug.log

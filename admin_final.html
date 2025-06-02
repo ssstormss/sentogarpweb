@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Sentoga City</title>
+    <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        #adminLoginSection { display: block; }
+        #adminPanelSection { display: none; }
+        
+        .admin-container {
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .admin-form-group {
+            margin-bottom: 15px;
+        }
+        
+        .admin-form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .admin-form-group input,
+        .admin-form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .admin-form-group textarea {
+            min-height: 100px;
+        }
+        
+        .admin-tabs {
+            display: flex;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+        
+        .admin-tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            margin-right: 5px;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .admin-tab.active {
+            border-bottom-color: #3498db;
+            font-weight: bold;
+        }
+        
+        .admin-content {
+            display: none;
+        }
+        
+        .admin-content.active {
+            display: block;
+        }
+        
+        .admin-item {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .admin-item-actions {
+            margin-top: 10px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .delete-btn {
+            background-color: #e74c3c;
+        }
+        
+        .delete-btn:hover {
+            background-color: #c0392b;
+        }
+        
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <h1>Sentoga City</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="shop.html">Shop</a></li>
+                <li><a href="rules.html">Regelwerk</a></li>
+                <li><a href="admin_final.html" class="active admin-link">Admin</a></li>
+            </ul>
+        </nav>
+        <div class="menu-toggle">
+            <i class="fas fa-bars"></i>
+        </div>
+    </header>
+
+    <section class="page-header">
+        <div class="container">
+            <h1>Admin-Bereich</h1>
+            <p>Verwalte den Shop und das Regelwerk deines Servers</p>
+        </div>
+    </section>
+
+    <!-- Login Section -->
+    <section id="adminLoginSection">
+        <div class="container">
+            <div class="admin-container">
+                <h2>Admin Login</h2>
+                <div class="admin-form">
+                    <div class="admin-form-group">
+                        <label for="username">Benutzername</label>
+                        <input type="text" id="username" placeholder="Benutzername" value="admin">
+                    </div>
+                    <div class="admin-form-group">
+                        <label for="password">Passwort</label>
+                        <input type="password" id="password" placeholder="Passwort" value="admin123">
+                    </div>
+                    <button id="loginButton" class="btn">Anmelden</button>
+                </div>
+                <p class="admin-info"></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Admin Panel Section -->
+    <section id="adminPanelSection">
+        <div class="container">
+            <div class="admin-container">
+                <div class="admin-header">
+                    <h2>Admin Panel</h2>
+                    <button id="logoutButton" class="btn">Abmelden</button>
+                </div>
+                
+                <div class="admin-tabs">
+                    <div class="admin-tab active" data-tab="shopTab">Shop verwalten</div>
+                    <div class="admin-tab" data-tab="rulesTab">Regelwerk verwalten</div>
+                </div>
+                
+                <!-- Shop Management -->
+                <div id="shopTab" class="admin-content active">
+                    <h3>Shop-Artikel verwalten</h3>
+                    
+                    <form id="shopForm">
+                        <input type="hidden" id="editItemId" value="">
+                        
+                        <div class="admin-form-group">
+                            <label for="itemTitle">Titel</label>
+                            <input type="text" id="itemTitle" placeholder="z.B. VIP Status" required>
+                        </div>
+                        
+                        <div class="admin-form-group">
+                            <label for="itemDescription">Beschreibung</label>
+                            <textarea id="itemDescription" placeholder="Beschreibe den Artikel..." required></textarea>
+                        </div>
+                        
+                        <div class="admin-form-group">
+                            <label for="itemPrice">Preis (€)</label>
+                            <input type="number" id="itemPrice" placeholder="z.B. 15.00" step="0.01" min="0" required>
+                        </div>
+                        
+                        <div class="admin-form-group">
+                            <label for="itemImage">Bild URL (optional)</label>
+                            <input type="text" id="itemImage" placeholder="z.B. img/vip.svg">
+                        </div>
+                        
+                        <div>
+                            <button type="submit" id="saveItemBtn" class="btn">Artikel hinzufügen</button>
+                            <button type="button" id="resetItemBtn" class="btn">Zurücksetzen</button>
+                        </div>
+                    </form>
+                    
+                    <h3>Vorhandene Artikel</h3>
+                    <div id="shopItemsList"></div>
+                </div>
+                
+                <!-- Rules Management -->
+                <div id="rulesTab" class="admin-content">
+                    <h3>Regeln verwalten</h3>
+                    
+                    <form id="ruleForm">
+                        <input type="hidden" id="editRuleId" value="">
+                        
+                        <div class="admin-form-group">
+                            <label for="ruleSection">Kategorie</label>
+                            <input type="text" id="ruleSection" placeholder="z.B. Allgemeine Regeln" required>
+                        </div>
+                        
+                        <div class="admin-form-group">
+                            <label for="ruleText">Regeltext</label>
+                            <textarea id="ruleText" placeholder="Beschreibe die Regel..." required></textarea>
+                        </div>
+                        
+                        <div>
+                            <button type="submit" id="saveRuleBtn" class="btn">Regel hinzufügen</button>
+                            <button type="button" id="resetRuleBtn" class="btn">Zurücksetzen</button>
+                        </div>
+                    </form>
+                    
+                    <h3>Vorhandene Regeln</h3>
+                    <div id="rulesList"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <h2>Sentoga City</h2>
+                    <p>Dein FiveM Roleplay-Server</p>
+                </div>
+                <div class="footer-links">
+                    <h3>Links</h3>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="shop.html">Shop</a></li>
+                        <li><a href="rules.html">Regelwerk</a></li>
+                    </ul>
+                </div>
+                <div class="footer-social">
+                    <h3>Social Media</h3>
+                    <div class="social-icons">
+                        <a href="#" target="_blank"><i class="fab fa-discord"></i></a>
+                        <a href="#" target="_blank"><i class="fab fa-youtube"></i></a>
+                        <a href="#" target="_blank"><i class="fab fa-instagram"></i></a>
+                        <a href="#" target="_blank"><i class="fab fa-tiktok"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Sentoga City. Alle Rechte vorbehalten.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM-Elemente
+            const adminLoginSection = document.getElementById('adminLoginSection');
+            const adminPanelSection = document.getElementById('adminPanelSection');
+            const loginButton = document.getElementById('loginButton');
+            const logoutButton = document.getElementById('logoutButton');
+            const tabs = document.querySelectorAll('.admin-tab');
+            const tabContents = document.querySelectorAll('.admin-content');
+            
+            // Shop-Elemente
+            const shopForm = document.getElementById('shopForm');
+            const shopItemsList = document.getElementById('shopItemsList');
+            const editItemId = document.getElementById('editItemId');
+            const itemTitle = document.getElementById('itemTitle');
+            const itemDescription = document.getElementById('itemDescription');
+            const itemPrice = document.getElementById('itemPrice');
+            const itemImage = document.getElementById('itemImage');
+            const saveItemBtn = document.getElementById('saveItemBtn');
+            const resetItemBtn = document.getElementById('resetItemBtn');
+            
+            // Regelwerk-Elemente
+            const ruleForm = document.getElementById('ruleForm');
+            const rulesList = document.getElementById('rulesList');
+            const editRuleId = document.getElementById('editRuleId');
+            const ruleSection = document.getElementById('ruleSection');
+            const ruleText = document.getElementById('ruleText');
+            const saveRuleBtn = document.getElementById('saveRuleBtn');
+            const resetRuleBtn = document.getElementById('resetRuleBtn');
+            
+            // ===== LOGIN & LOGOUT =====
+            
+            // Login-Button Event-Listener
+            loginButton.addEventListener('click', function() {
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                
+                // Zwei Benutzerkonten zur Auswahl
+                if ((username === 'admin' && password === 'admin1236') || 
+                    (username === 'fsociety' && password === 'tiny4tubes')) {
+                    // Login erfolgreich
+                    adminLoginSection.style.display = 'none';
+                    adminPanelSection.style.display = 'block';
+                    console.log('Login erfolgreich als: ' + username);
+                    
+                    // Lade Shop-Items und Regeln
+                    loadShopItems();
+                    loadRules();
+                } else {
+                    // Login fehlgeschlagen
+                    alert('Falsche Zugangsdaten!');
+                }
+            });
+            
+            // Logout-Button Event-Listener
+            logoutButton.addEventListener('click', function() {
+                adminLoginSection.style.display = 'block';
+                adminPanelSection.style.display = 'none';
+                console.log('Logout erfolgt');
+            });
+            
+            // ===== TABS =====
+            
+            // Tab-Wechsel
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // Entferne aktive Klasse von allen Tabs und Inhalten
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    
+                    // Setze aktive Klasse für ausgewählten Tab und Inhalt
+                    this.classList.add('active');
+                    const tabId = this.getAttribute('data-tab');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+            
+            // ===== SHOP MANAGEMENT =====
+            
+            // Shop-Formular absenden
+            shopForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Validierung
+                if (!itemTitle.value || !itemDescription.value || !itemPrice.value) {
+                    alert('Bitte fülle alle Pflichtfelder aus!');
+                    return;
+                }
+                
+                // Artikel speichern
+                saveShopItem();
+            });
+            
+            // Shop-Item speichern
+            function saveShopItem() {
+                // Lade vorhandene Items
+                const items = JSON.parse(localStorage.getItem('shopItems') || '[]');
+                
+                // Erstelle neues Item-Objekt
+                const title = itemTitle.value;
+                const description = itemDescription.value;
+                const price = itemPrice.value + ' €';
+                const image = itemImage.value || 'img/placeholder.svg';
+                
+                if (editItemId.value) {
+                    // Item bearbeiten
+                    const index = items.findIndex(item => item.id === editItemId.value);
+                    if (index !== -1) {
+                        items[index] = {
+                            id: editItemId.value,
+                            title: title,
+                            description: description,
+                            price: price,
+                            image: image
+                        };
+                    }
+                } else {
+                    // Neues Item hinzufügen
+                    const newItem = {
+                        id: Date.now().toString(),
+                        title: title,
+                        description: description,
+                        price: price,
+                        image: image
+                    };
+                    items.push(newItem);
+                }
+                
+                // In LocalStorage speichern
+                localStorage.setItem('shopItems', JSON.stringify(items));
+                
+                // Formular zurücksetzen
+                resetShopForm();
+                
+                // Liste aktualisieren
+                loadShopItems();
+                
+                // Bestätigung
+                alert(editItemId.value ? 'Artikel wurde aktualisiert!' : 'Artikel wurde hinzugefügt!');
+            }
+            
+            // Shop-Items laden
+            function loadShopItems() {
+                // Lade Items aus LocalStorage
+                const items = JSON.parse(localStorage.getItem('shopItems') || '[]');
+                
+                // Liste leeren
+                shopItemsList.innerHTML = '';
+                
+                // Wenn keine Items vorhanden sind
+                if (items.length === 0) {
+                    shopItemsList.innerHTML = '<p>Keine Artikel vorhanden. Füge neue Artikel hinzu.</p>';
+                    return;
+                }
+                
+                // Items anzeigen
+                items.forEach(function(item) {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'admin-item';
+                    itemDiv.innerHTML = `
+                        <div>
+                            <h4>${item.title}</h4>
+                            <p>${item.description}</p>
+                            <p><strong>Preis:</strong> ${item.price}</p>
+                        </div>
+                        <div class="admin-item-actions">
+                            <button class="btn edit-item-btn" data-id="${item.id}">Bearbeiten</button>
+                            <button class="btn delete-btn delete-item-btn" data-id="${item.id}">Löschen</button>
+                        </div>
+                    `;
+                    
+                    shopItemsList.appendChild(itemDiv);
+                });
+                
+                // Event-Handler für Buttons hinzufügen
+                addShopItemEventHandlers();
+            }
+            
+            // Event-Handler für Shop-Items
+            function addShopItemEventHandlers() {
+                // Bearbeiten-Buttons
+                document.querySelectorAll('.edit-item-btn').forEach(function(btn) {
+                    btn.addEventListener('click', function() {
+                        const id = this.getAttribute('data-id');
+                        editShopItem(id);
+                    });
+                });
+                
+                // Löschen-Buttons
+                document.querySelectorAll('.delete-item-btn').forEach(function(btn) {
+                    btn.addEventListener('click', function() {
+                        const id = this.getAttribute('data-id');
+                        deleteShopItem(id);
+                    });
+                });
+            }
+            
+            // Shop-Item zum Bearbeiten laden
+            function editShopItem(id) {
+                const items = JSON.parse(localStorage.getItem('shopItems') || '[]');
+                const item = items.find(item => item.id === id);
+                
+                if (item) {
+                    // Formular mit Daten füllen
+                    itemTitle.value = item.title;
+                    itemDescription.value = item.description;
+                    itemPrice.value = item.price.replace(/[^\d.]/g, '');
+                    itemImage.value = item.image === 'img/placeholder.svg' ? '' : item.image;
+                    editItemId.value = id;
+                    
+                    // Button-Text ändern
+                    saveItemBtn.textContent = 'Artikel aktualisieren';
+                }
+            }
+            
+            // Shop-Item löschen
+            function deleteShopItem(id) {
+                if (confirm('Möchtest du diesen Artikel wirklich löschen?')) {
+                    // Items aus LocalStorage laden
+                    const items = JSON.parse(localStorage.getItem('shopItems') || '[]');
+                    
+                    // Item entfernen
+                    const filteredItems = items.filter(item => item.id !== id);
+                    
+                    // Zurück in LocalStorage speichern
+                    localStorage.setItem('shopItems', JSON.stringify(filteredItems));
+                    
+                    // Falls gerade bearbeitet wird, Formular zurücksetzen
+                    if (editItemId.value === id) {
+                        resetShopForm();
+                    }
+                    
+                    // Liste aktualisieren
+                    loadShopItems();
+                    
+                    // Bestätigung
+                    alert('Artikel wurde gelöscht!');
+                }
+            }
+            
+            // Shop-Formular zurücksetzen
+            function resetShopForm() {
+                // Formular manuell zurücksetzen
+                itemTitle.value = '';
+                itemDescription.value = '';
+                itemPrice.value = '';
+                itemImage.value = '';
+                editItemId.value = '';
+                
+                // Button-Text zurücksetzen
+                saveItemBtn.textContent = 'Artikel hinzufügen';
+                
+                console.log('Shop-Formular zurückgesetzt');
+            }
+            
+            // Reset-Button für Shop-Formular
+            resetItemBtn.addEventListener('click', function() {
+                resetShopForm();
+                alert('Formular zurückgesetzt!');
+            });
+            
+            // ===== RULES MANAGEMENT =====
+            
+            // Regelwerk-Formular absenden
+            ruleForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Validierung
+                if (!ruleSection.value || !ruleText.value) {
+                    alert('Bitte fülle alle Pflichtfelder aus!');
+                    return;
+                }
+                
+                // Regel speichern
+                saveRule();
+            });
+            
+            // Regel speichern
+            function saveRule() {
+                // Lade vorhandene Regeln
+                const rules = JSON.parse(localStorage.getItem('rules') || '[]');
+                
+                // Erstelle neues Regel-Objekt
+                const section = ruleSection.value;
+                const rule = ruleText.value;
+                
+                if (editRuleId.value) {
+                    // Regel bearbeiten
+                    const index = rules.findIndex(r => r.id === editRuleId.value);
+                    if (index !== -1) {
+                        rules[index] = {
+                            id: editRuleId.value,
+                            section: section,
+                            rule: rule
+                        };
+                    }
+                } else {
+                    // Neue Regel hinzufügen
+                    const newRule = {
+                        id: Date.now().toString(),
+                        section: section,
+                        rule: rule
+                    };
+                    rules.push(newRule);
+                }
+                
+                // In LocalStorage speichern
+                localStorage.setItem('rules', JSON.stringify(rules));
+                
+                // Formular zurücksetzen
+                resetRuleForm();
+                
+                // Liste aktualisieren
+                loadRules();
+                
+                // Bestätigung
+                alert(editRuleId.value ? 'Regel wurde aktualisiert!' : 'Regel wurde hinzugefügt!');
+            }
+            
+            // Regeln laden
+            function loadRules() {
+                // Lade Regeln aus LocalStorage
+                const rules = JSON.parse(localStorage.getItem('rules') || '[]');
+                
+                // Liste leeren
+                rulesList.innerHTML = '';
+                
+                // Wenn keine Regeln vorhanden sind
+                if (rules.length === 0) {
+                    rulesList.innerHTML = '<p>Keine Regeln vorhanden. Füge neue Regeln hinzu.</p>';
+                    return;
+                }
+                
+                // Regeln anzeigen
+                rules.forEach(function(rule) {
+                    const ruleDiv = document.createElement('div');
+                    ruleDiv.className = 'admin-item';
+                    ruleDiv.innerHTML = `
+                        <div>
+                            <h4>${rule.section}</h4>
+                            <p>${rule.rule}</p>
+                        </div>
+                        <div class="admin-item-actions">
+                            <button class="btn edit-rule-btn" data-id="${rule.id}">Bearbeiten</button>
+                            <button class="btn delete-btn delete-rule-btn" data-id="${rule.id}">Löschen</button>
+                        </div>
+                    `;
+                    
+                    rulesList.appendChild(ruleDiv);
+                });
+                
+                // Event-Handler für Buttons hinzufügen
+                addRuleEventHandlers();
+            }
+            
+            // Event-Handler für Regeln
+            function addRuleEventHandlers() {
+                // Bearbeiten-Buttons
+                document.querySelectorAll('.edit-rule-btn').forEach(function(btn) {
+                    btn.addEventListener('click', function() {
+                        const id = this.getAttribute('data-id');
+                        editRule(id);
+                    });
+                });
+                
+                // Löschen-Buttons
+                document.querySelectorAll('.delete-rule-btn').forEach(function(btn) {
+                    btn.addEventListener('click', function() {
+                        const id = this.getAttribute('data-id');
+                        deleteRule(id);
+                    });
+                });
+            }
+            
+            // Regel zum Bearbeiten laden
+            function editRule(id) {
+                const rules = JSON.parse(localStorage.getItem('rules') || '[]');
+                const rule = rules.find(r => r.id === id);
+                
+                if (rule) {
+                    // Formular mit Daten füllen
+                    ruleSection.value = rule.section;
+                    ruleText.value = rule.rule;
+                    editRuleId.value = id;
+                    
+                    // Button-Text ändern
+                    saveRuleBtn.textContent = 'Regel aktualisieren';
+                }
+            }
+            
+            // Regel löschen
+            function deleteRule(id) {
+                if (confirm('Möchtest du diese Regel wirklich löschen?')) {
+                    // Regeln aus LocalStorage laden
+                    const rules = JSON.parse(localStorage.getItem('rules') || '[]');
+                    
+                    // Regel entfernen
+                    const filteredRules = rules.filter(rule => rule.id !== id);
+                    
+                    // Zurück in LocalStorage speichern
+                    localStorage.setItem('rules', JSON.stringify(filteredRules));
+                    
+                    // Falls gerade bearbeitet wird, Formular zurücksetzen
+                    if (editRuleId.value === id) {
+                        resetRuleForm();
+                    }
+                    
+                    // Liste aktualisieren
+                    loadRules();
+                    
+                    // Bestätigung
+                    alert('Regel wurde gelöscht!');
+                }
+            }
+            
+            // Regelwerk-Formular zurücksetzen
+            function resetRuleForm() {
+                // Formular manuell zurücksetzen
+                ruleSection.value = '';
+                ruleText.value = '';
+                editRuleId.value = '';
+                
+                // Button-Text zurücksetzen
+                saveRuleBtn.textContent = 'Regel hinzufügen';
+                
+                console.log('Regelwerk-Formular zurückgesetzt');
+            }
+            
+            // Reset-Button für Regelwerk-Formular
+            resetRuleBtn.addEventListener('click', function() {
+                resetRuleForm();
+                alert('Formular zurückgesetzt!');
+            });
+        });
+    </script>
+</body>
+</html>

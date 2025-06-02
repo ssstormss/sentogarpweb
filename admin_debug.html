@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Debug - Sentoga City</title>
+    <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+        
+        body {
+            background-color: #f4f4f4;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        
+        .section {
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+        
+        button:hover {
+            background: #45a049;
+        }
+        
+        button.delete {
+            background: #f44336;
+        }
+        
+        button.delete:hover {
+            background: #d32f2f;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        .item {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        
+        .actions {
+            margin-top: 10px;
+        }
+        
+        #debugOutput {
+            background-color: #333;
+            color: #fff;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            margin-top: 20px;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Admin Debug Panel - Sentoga City</h1>
+        
+        <div class="section">
+            <h2>Debug Konsole</h2>
+            <div id="debugOutput">Debug-Informationen werden hier angezeigt...</div>
+        </div>
+        
+        <div class="section">
+            <h2>Shop-Artikel</h2>
+            
+            <div id="shopForm">
+                <div class="form-group">
+                    <label for="itemTitle">Titel</label>
+                    <input type="text" id="itemTitle" placeholder="Titel des Artikels">
+                </div>
+                
+                <div class="form-group">
+                    <label for="itemDesc">Beschreibung</label>
+                    <textarea id="itemDesc" placeholder="Beschreibung des Artikels"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="itemPrice">Preis (€)</label>
+                    <input type="number" id="itemPrice" placeholder="10.00" step="0.01">
+                </div>
+                
+                <div class="form-group">
+                    <label for="itemImage">Bild URL</label>
+                    <input type="text" id="itemImage" placeholder="img/placeholder.svg">
+                </div>
+                
+                <button id="addItemBtn">Artikel hinzufügen</button>
+            </div>
+            
+            <h3>Vorhandene Artikel</h3>
+            <div id="shopItemsList"></div>
+            
+            <button id="clearShopItems" class="delete">Alle Artikel löschen</button>
+        </div>
+    </div>
+    
+    <script>
+        // Debug-Funktion, um Meldungen in der Debug-Konsole anzuzeigen
+        function debug(message, data = null) {
+            const debugOutput = document.getElementById('debugOutput');
+            const timestamp = new Date().toLocaleTimeString();
+            
+            let logMessage = `[${timestamp}] ${message}`;
+            if (data !== null) {
+                logMessage += '\n' + JSON.stringify(data, null, 2);
+            }
+            
+            debugOutput.innerHTML = logMessage + '\n\n' + debugOutput.innerHTML;
+            console.log(message, data);
+        }
+        
+        // Warte, bis das Dokument geladen ist
+        document.addEventListener('DOMContentLoaded', function() {
+            debug('Seite geladen');
+            
+            // DOM-Elemente
+            const shopItemsList = document.getElementById('shopItemsList');
+            const addItemBtn = document.getElementById('addItemBtn');
+            const clearShopItemsBtn = document.getElementById('clearShopItems');
+            
+            // Lade Artikel beim Start
+            loadShopItems();
+            
+            // Event-Listener für Hinzufügen-Button
+            addItemBtn.addEventListener('click', function() {
+                debug('Hinzufügen-Button geklickt');
+                
+                const title = document.getElementById('itemTitle').value;
+                const desc = document.getElementById('itemDesc').value;
+                const price = document.getElementById('itemPrice').value;
+                const image = document.getElementById('itemImage').value || 'img/placeholder.svg';
+                
+                if (!title || !desc || !price) {
+                    debug('Fehler: Bitte fülle alle Pflichtfelder aus');
+                    alert('Bitte fülle alle Pflichtfelder aus');
+                    return;
+                }
+                
+                addShopItem(title, desc, price, image);
+            });
+            
+            // Event-Listener für Alles-Löschen-Button
+            clearShopItemsBtn.addEventListener('click', function() {
+                debug('Alles-Löschen-Button geklickt');
+                
+                if (confirm('Möchtest du wirklich ALLE Artikel löschen?')) {
+                    localStorage.removeItem('shopItems');
+                    loadShopItems();
+                    debug('Alle Artikel gelöscht');
+                }
+            });
+            
+            // Funktion zum Hinzufügen eines Artikels
+            function addShopItem(title, desc, price, image) {
+                debug('addShopItem aufgerufen mit:', { title, desc, price, image });
+                
+                try {
+                    // Lade bestehende Artikel
+                    const items = JSON.parse(localStorage.getItem('shopItems') || '[]');
+                    
+                    // Neues Item erstellen
+                    const newItem = {
+                        id: Date.now().toString(),
+                        title: title,
+                        description: desc,
+                        price: price + ' €',
+                        image: image
+                    };
+                    
+                    // Zum Array hinzufügen
+                    items.push(newItem);
+                    
+                    // In LocalStorage speichern
+                    localStorage.setItem('shopItems', JSON.stringify(items));
+                    
+                    // Felder zurücksetzen
+                    document.getElementById('itemTitle').value = '';
+                    document.getElementById('itemDesc').value = '';
+                    document.getElementById('itemPrice').value = '';
+                    document.getElementById('itemImage').value = '';
+                    
+                    // Liste aktualisieren
+                    loadShopItems();
+                    
+                    debug('Artikel erfolgreich hinzugefügt:', newItem);
+                } catch (error) {
+                    debug('Fehler beim Hinzufügen des Artikels:', error);
+                    alert('Fehler beim Hinzufügen: ' + error.message);
+                }
+            }
+            
+            // Funktion zum Laden und Anzeigen der Artikel
+            function loadShopItems() {
+                debug('loadShopItems aufgerufen');
+                
+                try {
+                    // Lade Artikel aus dem LocalStorage
+                    const items = JSON.parse(localStorage.getItem('shopItems') || '[]');
+                    
+                    debug('Geladene Artikel:', items);
+                    
+                    // Liste leeren
+                    shopItemsList.innerHTML = '';
+                    
+                    // Wenn keine Artikel vorhanden sind
+                    if (items.length === 0) {
+                        shopItemsList.innerHTML = '<p>Keine Artikel vorhanden</p>';
+                        return;
+                    }
+                    
+                    // Artikel anzeigen
+                    items.forEach(function(item) {
+                        const itemElement = document.createElement('div');
+                        itemElement.className = 'item';
+                        itemElement.innerHTML = `
+                            <h3>${item.title}</h3>
+                            <p>${item.description}</p>
+                            <p><strong>Preis:</strong> ${item.price}</p>
+                            <div class="actions">
+                                <button onclick="editShopItem('${item.id}')">Bearbeiten</button>
+                                <button class="delete" onclick="deleteShopItem('${item.id}')">Löschen</button>
+                            </div>
+                        `;
+                        
+                        shopItemsList.appendChild(itemElement);
+                    });
+                } catch (error) {
+                    debug('Fehler beim Laden der Artikel:', error);
+                    alert('Fehler beim Laden: ' + error.message);
+                }
+            }
+            
+            // Artikel löschen (als globale Funktion)
+            window.deleteShopItem = function(id) {
+                debug('deleteShopItem aufgerufen mit ID:', id);
+                
+                try {
+                    if (confirm('Möchtest du diesen Artikel wirklich löschen?')) {
+                        // Lade bestehende Artikel
+                        const items = JSON.parse(localStorage.getItem('shopItems') || '[]');
+                        debug('Artikel vor dem Löschen:', items);
+                        
+                        // Artikel mit passender ID finden und entfernen
+                        const itemIndex = items.findIndex(item => item.id === id);
+                        
+                        if (itemIndex !== -1) {
+                            debug('Artikel gefunden an Index:', itemIndex);
+                            items.splice(itemIndex, 1);
+                            
+                            // Aktualisierte Liste speichern
+                            localStorage.setItem('shopItems', JSON.stringify(items));
+                            
+                            // Liste aktualisieren
+                            loadShopItems();
+                            
+                            debug('Artikel erfolgreich gelöscht');
+                            alert('Artikel wurde gelöscht');
+                        } else {
+                            debug('Artikel mit ID ' + id + ' nicht gefunden');
+                            alert('Artikel nicht gefunden');
+                        }
+                    }
+                } catch (error) {
+                    debug('Fehler beim Löschen des Artikels:', error);
+                    alert('Fehler beim Löschen: ' + error.message);
+                }
+            };
+            
+            // Artikel bearbeiten (als globale Funktion)
+            window.editShopItem = function(id) {
+                debug('editShopItem aufgerufen mit ID:', id);
+                
+                try {
+                    // Lade bestehende Artikel
+                    const items = JSON.parse(localStorage.getItem('shopItems') || '[]');
+                    
+                    // Artikel mit passender ID finden
+                    const item = items.find(item => item.id === id);
+                    
+                    if (item) {
+                        debug('Artikel zum Bearbeiten gefunden:', item);
+                        
+                        // Formular mit Daten des Artikels füllen
+                        document.getElementById('itemTitle').value = item.title;
+                        document.getElementById('itemDesc').value = item.description;
+                        document.getElementById('itemPrice').value = item.price.replace(/[^\d.]/g, '');
+                        document.getElementById('itemImage').value = item.image === 'img/placeholder.svg' ? '' : item.image;
+                        
+                        // Löschen und neu hinzufügen
+                        deleteShopItem(id);
+                    } else {
+                        debug('Artikel mit ID ' + id + ' nicht gefunden');
+                        alert('Artikel nicht gefunden');
+                    }
+                } catch (error) {
+                    debug('Fehler beim Bearbeiten des Artikels:', error);
+                    alert('Fehler beim Bearbeiten: ' + error.message);
+                }
+            };
+        });
+    </script>
+</body>
+</html>

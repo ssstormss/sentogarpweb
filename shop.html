@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Kaufe exklusive Vorteile und Items für deinen Charakter auf dem Sentoga City FiveM Roleplay-Server. VIP-Status, Starterpakete und mehr!">
+    <title>Shop - Sentoga City</title>
+    <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <h1>Sentoga City</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="shop.html" class="active">Shop</a></li>
+                <li><a href="rules.html">Regelwerk</a></li>
+                <li><a href="admin.html" class="admin-link">Admin</a></li>
+            </ul>
+        </nav>
+        <div class="menu-toggle">
+            <i class="fas fa-bars"></i>
+        </div>
+    </header>
+
+    <section class="page-header">
+        <div class="container">
+            <h1>Shop</h1>
+            <p>Kaufe exklusive Vorteile und Items für deinen Charakter auf Sentoga City</p>
+        </div>
+    </section>
+
+    <section class="shop">
+        <div class="container">
+            <div class="shop-container">
+                <!-- Shop-Elemente werden durch das JavaScript dynamisch geladen -->
+                
+                <!-- Shop-Elemente werden dynamisch aus dem LocalStorage geladen -->
+                <div id="shopItemsContainer">
+                    <!-- Hier werden die Shop-Items angezeigt -->
+                </div>
+                
+                <!-- Meldung, wenn keine Items vorhanden sind -->
+                <div id="noItemsMessage" style="display: none;">
+                    <p>Derzeit sind keine Shop-Artikel verfügbar.</p>
+                </div>
+                
+                <div class="shop-item">
+                    <div class="shop-item-image">
+                        <img src="img/car.svg" alt="Luxus-Fahrzeug">
+                    </div>
+                    <div class="shop-item-content">
+                        <h3 class="shop-item-title">Luxus-Fahrzeug</h3>
+                        <p class="shop-item-description">Ein exklusives Fahrzeug, das nur über den Shop erhältlich ist.</p>
+                        <p class="shop-item-price">25.00 €</p>
+                        <a href="#" class="btn shop-item-button">Kaufen</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="payment-info">
+        <div class="container">
+            <h2>Zahlungsinformationen</h2>
+            <p>Wir akzeptieren verschiedene Zahlungsmethoden:</p>
+            <div class="payment-methods">
+                <i class="fab fa-paypal"></i>
+                <i class="fab fa-cc-visa"></i>
+                <i class="fab fa-cc-mastercard"></i>
+                <i class="fab fa-cc-amex"></i>
+            </div>
+            <div class="payment-note">
+                <p>Nach erfolgreichem Kauf erhältst du eine E-Mail mit Anweisungen, wie du deine gekauften Items im Spiel erhältst.</p>
+                <p>Bei Fragen oder Problemen kontaktiere uns bitte über Discord.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <h2>Sentoga City</h2>
+                    <p>Dein FiveM Roleplay-Server</p>
+                </div>
+                <div class="footer-links">
+                    <h3>Links</h3>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="shop.html">Shop</a></li>
+                        <li><a href="rules.html">Regelwerk</a></li>
+                    </ul>
+                </div>
+                <div class="footer-social">
+                    <h3>Social Media</h3>
+                    <div class="social-icons">
+                        <a href="#" target="_blank"><i class="fab fa-discord"></i></a>
+                        <a href="#" target="_blank"><i class="fab fa-youtube"></i></a>
+                        <a href="#" target="_blank"><i class="fab fa-instagram"></i></a>
+                        <a href="#" target="_blank"><i class="fab fa-tiktok"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Sentoga City. Alle Rechte vorbehalten.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+    <script src="js/shop-display.js"></script>
+</body>
+</html>
