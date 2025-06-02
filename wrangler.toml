@@ -2,8 +2,11 @@
 command = ""
 
 [site]
+bucket = "."
 include = ["**/*"]
 exclude = ["**/.git/**", "**/.gitignore"]
 
 [build.environment]
 NODE_VERSION = "18"
+
+main = "workers-site/index.js"
