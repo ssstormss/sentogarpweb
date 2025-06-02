@@ -1,0 +1,12 @@
+{
+  "name": "sentoga-city-website",
+  "version": "1.0.0",
+  "description": "Sentoga City FiveM Website",
+  "scripts": {
+    "start": "npx live-server",
+    "preview": "npx live-server"
+  },
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  }
+}
