@@ -1,0 +1,14 @@
+[build]
+command = "npm run build"
+output_directory = "_site"
+
+[build.environment]
+NODE_VERSION = "18"
+
+[site]
+bucket = "_site"
+entry-point = "dist"
+
+[site.upload]
+include = ["**/*"]
+exclude = ["**/.git/**", "**/.gitignore"]
