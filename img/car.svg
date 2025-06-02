@@ -1,0 +1,26 @@
+<svg width="400" height="200" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="200" fill="#3498db" />
+  <text x="200" y="50" font-family="Arial" font-size="25" font-weight="bold" fill="white" text-anchor="middle">Luxus-Fahrzeug</text>
+  
+  <!-- Auto Silhouette -->
+  <g transform="translate(100,100)">
+    <!-- Karosserie -->
+    <path d="M10,50 C10,30 30,30 60,30 L140,30 C170,30 190,30 190,50 L190,60 C190,70 180,70 180,70 L20,70 C20,70 10,70 10,60 Z" fill="#2c3e50"/>
+    
+    <!-- Dach -->
+    <path d="M60,30 L80,10 L120,10 L140,30" fill="#2c3e50"/>
+    
+    <!-- Fenster -->
+    <path d="M65,30 L85,15 L115,15 L135,30" fill="#85c1e9"/>
+    
+    <!-- Räder -->
+    <circle cx="50" cy="70" r="15" fill="#34495e"/>
+    <circle cx="50" cy="70" r="8" fill="#7f8c8d"/>
+    <circle cx="150" cy="70" r="15" fill="#34495e"/>
+    <circle cx="150" cy="70" r="8" fill="#7f8c8d"/>
+    
+    <!-- Lichter -->
+    <rect x="10" y="40" width="10" height="5" rx="2" fill="#f1c40f"/>
+    <rect x="180" y="40" width="10" height="5" rx="2" fill="#e74c3c"/>
+  </g>
+</svg>

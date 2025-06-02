@@ -1,0 +1,5 @@
+<svg width="400" height="200" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="200" fill="#f39c12" />
+  <text x="200" y="100" font-family="Arial" font-size="40" font-weight="bold" fill="white" text-anchor="middle">VIP Status</text>
+  <polygon points="100,50 120,90 160,90 130,115 140,155 100,130 60,155 70,115 40,90 80,90" fill="white" />
+</svg>

@@ -1,0 +1,27 @@
+[
+  {
+    "id": "1",
+    "section": "Allgemeine Regeln",
+    "rule": "Respektiere alle Spieler und Staff-Mitglieder. Beleidigungen und Diskriminierung werden nicht toleriert."
+  },
+  {
+    "id": "2",
+    "section": "Allgemeine Regeln",
+    "rule": "Das Ausnutzen von Spielfehlern (Glitches oder Bugs) ist strengstens verboten und wird mit einem permanenten Bann bestraft."
+  },
+  {
+    "id": "3",
+    "section": "Roleplay Regeln",
+    "rule": "No Random Death Match (RDM) - Töte keine Spieler ohne vorherige Roleplay-Interaktion."
+  },
+  {
+    "id": "4",
+    "section": "Roleplay Regeln",
+    "rule": "No Vehicle Death Match (VDM) - Fahrzeuge dürfen nicht als Waffe verwendet werden."
+  },
+  {
+    "id": "5",
+    "section": "Kommunikation",
+    "rule": "Verwende den In-Game-Voice-Chat für Kommunikation in der Nähe. Für Telefonate sind entsprechende Rollenspiel-Aktionen erforderlich."
+  }
+]
