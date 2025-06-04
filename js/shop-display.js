@@ -3,25 +3,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const demoShopItems = [
         {
             id: '1',
-            title: 'VIP Status',
-            description: 'Erhalte exklusive Vorteile im Spiel mit dem VIP-Status auf unserem Server.',
-            price: '9.99 €',
-            image: 'img/vip.svg'
+            title: 'derzeit nix verfügbar',
+            description: 'derzeit ist nix verfügrbar.',
+            price: '€',
+            image: ''
         },
-        {
-            id: '2',
-            title: 'Starter Pack',
-            description: 'Der perfekte Start für Neulinge mit 50.000$ Spielgeld und einem Anfänger-Fahrzeug.',
-            price: '14.99 €',
-            image: 'img/startpack.svg'
-        },
-        {
-            id: '3',
-            title: 'Premium Fahrzeug',
-            description: 'Ein exklusives Fahrzeug mit einzigartigen Anpassungen nur für dich.',
-            price: '19.99 €',
-            image: 'img/car.svg'
-        }
     ];
 
     // Elemente aus dem DOM holen
